@@ -1,35 +1,35 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { Room } from '../models/room.model';
-import { BehaviorSubject, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoomService {
-   // Hardcoded mock rooms
-  private rooms: Room[] = [
-    { id: 1, name: '101', type: 'Single', price: 150, availability: true },
-    { id: 2, name: '102', type: 'Double', price: 250, availability: true },
-    { id: 3, name: '103', type: 'Suite', price: 350, availability: true },
-    { id: 4, name: '201', type: 'Double', price: 330, availability: true },
-    { id: 5, name: '202', type: 'Single', price: 199, availability: false }
-  ];
-   // BehaviorSubject to simulate API
-  private roomsSubject = new BehaviorSubject<Room[]>(this.rooms);
 
-    // Get rooms as Observable
+  // MockAPI endpoint
+  private apiUrl = 'https://693eea3b12c964ee6b6eb05a.mockapi.io/rooms';
+
+  constructor(private http: HttpClient) {}
+
+  // Fetch rooms from MockAPI
   getRooms(): Observable<Room[]> {
-    return this.roomsSubject.asObservable();
+    return this.http.get<Room[]>(this.apiUrl);
   }
 
-   // Book a room (simulate API)
-  bookRoom(roomId: number): Observable<boolean> {
-    const room = this.rooms.find(r => r.id === roomId);
-    if (room && room.availability) {
-      room.availability = false;  // mark booked
-      this.roomsSubject.next(this.rooms);
-      return of(true);
-    }
-    return of(false);// booking failed
+  // Book a room (update availability)
+  bookRoom(room: Room): Observable<boolean> {
+    const updatedRoom = {
+      ...room,
+      availability: false
+    };
+
+    return this.http.put<Room>(
+      `${this.apiUrl}/${room.id}`,
+      updatedRoom
+    ).pipe(
+      map(() => true)
+    );
   }
 }

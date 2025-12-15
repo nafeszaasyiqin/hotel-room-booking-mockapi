@@ -12,9 +12,13 @@ import { Room } from '../../models/room.model';
   styleUrls: ['./room-list.component.css']
 })
 export class RoomListComponent {
-  rooms: Room[] = [];  // List of rooms fetched from service
 
-   // Control modal visibility
+  rooms: Room[] = [] ;// all room from API
+  selectedType = ''; //selected filter
+  roomTypes: string[] = [] ; //uniquew room type
+
+
+  // Control modal visibility
   showModal = false;
   selectedRoom: Room | null = null;
 
@@ -24,8 +28,26 @@ export class RoomListComponent {
   checkOutDate = '';
 
   constructor(private roomService: RoomService) {
-    this.roomService.getRooms().subscribe((rooms) => (this.rooms = rooms));
+    this.loadRooms();
   }
+
+  // Load rooms from MockAPI
+  loadRooms() {
+    this.roomService.getRooms().subscribe(rooms => {
+      this.rooms = rooms;
+
+      //unique type of room for filter
+      this.roomTypes= [... new Set(rooms.map(room=> room.type))];
+    });
+  }
+
+  filteredRooms(){
+    if(!this.selectedType){
+      return this.rooms;
+    }
+    return this.rooms.filter(room=> room.type ===this.selectedType);
+  }
+
 
   // Open booking modal for a selected room
   openBookingModal(room: Room) {
@@ -33,27 +55,29 @@ export class RoomListComponent {
     this.showModal = true;
   }
 
-   // Trigger booking, with simple form validation
+  // Trigger booking with validation
   bookRoom() {
-  if (!this.selectedRoom) return;
+    if (!this.selectedRoom) return;
 
-  // To make sure form is not empty
-  if (!this.guestName.trim() || !this.checkInDate || !this.checkOutDate) {
-    alert('Please fill in all fields before booking.');
-    return;
+    // Simple form validation
+    if (!this.guestName.trim() || !this.checkInDate || !this.checkOutDate) {
+      alert('Please fill in all fields before booking.');
+      return;
+    }
+
+    // Call MockAPI to update room availability
+    this.roomService.bookRoom(this.selectedRoom).subscribe(success => {
+      if (success) {
+        alert(`Room ${this.selectedRoom?.name} booked successfully!`);
+        this.resetModal();
+        this.loadRooms(); // Refresh list after booking
+      } else {
+        alert('Booking failed! Try again.');
+      }
+    });
   }
 
-  this.roomService.bookRoom(this.selectedRoom.id).subscribe((success) => {
-    if (success) {
-      alert(`Room ${this.selectedRoom?.name} booked successfully!`);
-      this.resetModal();
-    } else {
-      // Testing alert for booking failure
-      alert('Booking failed! Try again.');
-    }
-  }); 
-}
-
+  // Reset modal and form
   resetModal() {
     this.showModal = false;
     this.selectedRoom = null;

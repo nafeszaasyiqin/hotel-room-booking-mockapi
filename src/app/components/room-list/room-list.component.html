@@ -1,10 +1,26 @@
 <!-- Room List -->
 <div class="container mt-4">
-  <div class="row">
- <!-- Loop through rooms -->
-    <div class="col-md-4 mb-3" *ngFor="let room of rooms">
-      <div class="card">
-        <div class="card-body">
+
+ <!-- Filter & sort -->
+<div class="row mb-3">
+  <div class="col-md-4">
+  <label class="form label fw-bold">Filter by Room Type</label>
+  <select class="form-select" [(ngModel)]="selectedType">
+    <option value="">All Type</option>
+    <option *ngFor="let type of roomTypes" [value]="type">
+    {{ type }}
+    </option>
+    </select>
+ </div>
+ </div>
+
+ <!--Room list -->
+ <div class="row">
+  <div class="col-md-4 mb-3" *ngFor="let room of filteredRooms()">
+
+      <div class="card h-100 shadow-sm">
+        <div class="card-body d-flex flex-column">
+
           <h5 class="card-title">Room {{ room.name }}</h5>
           <p class="card-text">
             Type: {{ room.type }}<br>
