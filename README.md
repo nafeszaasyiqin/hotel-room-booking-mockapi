@@ -30,14 +30,16 @@ ng serve
 http://localhost:4200/
 ```
 
-## Design Decisions
+### Design Decisions
 
-#1. Standalone Components
+# Standalone Components
 I used standalone components in Angular. This makes each component more independent and avoids extra setup like declaring components inside modules.
 
-#3. Mock Service / API
+# Mock Service / API
 Instead of connecting to a real backend, I used a mock service using MockAPI for demo purposes
 
-#5. Simple Form Validation
+# Simple Form Validation
 I added basic checks to make sure users fill in all fields before booking a room.
+
+
 
