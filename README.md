@@ -16,5 +16,20 @@ A simple **Hotel Room Booking Engine** built with **Angular**. Users can view av
 ```bash
 git clone <YOUR_REPO_URL>
 cd hotel-room-booking
+```
+2. Install dependencies:
+```bash
+npm install
+```
+3. Run the development server:
+```bash
+ng serve
+```
+4. Open your browser and navigate to:
+```arduino
+http://localhost:4200/
+```
+
+
 
 
